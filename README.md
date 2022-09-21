@@ -1,3 +1,5 @@
+# GFX TEAM
+
 ### 📍 기획 의도
 
 - Firebase 백엔드 기술을 활용, GFX팀 UI관리툴 개발
