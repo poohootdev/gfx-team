@@ -6,12 +6,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "export": "next export"
   },
   "dependencies": {
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
     "firebase": "^9.10.0",
+    "firebase-tools": "^11.11.0",
+    "global": "^4.4.0",
     "install": "^0.13.0",
     "next": "12.3.1",
     "react": "18.2.0",
