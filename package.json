@@ -10,6 +10,7 @@
     "export": "next export"
   },
   "dependencies": {
+    "@tailwindcss/forms": "^0.5.3",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
     "firebase": "^9.10.0",
