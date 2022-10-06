@@ -126,7 +126,7 @@ const JoinPage: NextPage = () => {
             joinType={JOIN_INFO.PW_RE}
             onChangeX={onChangeX}
           ></JoinInput>
-          <button onClick={joinClick}>Join</button>
+          <button onClick={joinClick}>회원 가입</button>
         </div>
       </div>
     </section>
