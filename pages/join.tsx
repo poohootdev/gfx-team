@@ -1,7 +1,6 @@
 import type { NextPage } from 'next';
 import { useState } from 'react';
-
-import JoinInput from '../components/joinInput';
+import JoinInput from '../src/components/JoinInput';
 
 // interface
 interface UserInfo {
@@ -126,7 +125,7 @@ const JoinPage: NextPage = () => {
             joinType={JOIN_INFO.PW_RE}
             onChangeX={onChangeX}
           ></JoinInput>
-          <button onClick={joinClick}>Join</button>
+          <button onClick={joinClick}>회원 가입</button>
         </div>
       </div>
     </section>
