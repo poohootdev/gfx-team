@@ -1,5 +1,7 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import Footer from '../src/components/Footer';
+import Header from '../src/components/Header';
 
 const Home: NextPage = () => {
   return (
@@ -7,7 +9,15 @@ const Home: NextPage = () => {
       <Head>
         <title>GFX TEAM</title>
       </Head>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <Header />
+      <main>
+        <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+          <div className="px-4 py-6 sm:px-0">
+            <div className="h-96 rounded-lg border-4 border-dashed border-gray-200" />
+          </div>
+        </div>
+      </main>
+      <Footer />
     </>
   );
 };
