@@ -1,7 +1,6 @@
 import type { NextPage } from 'next';
 import { useState } from 'react';
-
-import JoinInput from '../components/joinInput';
+import JoinInput from '../src/components/JoinInput';
 
 // interface
 interface UserInfo {
