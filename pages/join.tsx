@@ -1,25 +1,25 @@
+import React, { useState, useCallback } from 'react';
 import type { NextPage } from 'next';
-import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { useDispatch } from 'react-redux';
+import '../src/firebase';
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { set, ref, getDatabase } from 'firebase/database';
+import { set_user } from '../src/slices/UserSlice';
 import JoinInput from '../src/components/JoinInput';
 
-// interface
-interface UserInfo {
-  id: string;
-  name: string;
-  pw: string;
-  pw_re: string;
-}
-
-// enum
-const JOIN_INFO = {
-  ID: 'id',
-  NAME: 'name',
-  PW: 'pw',
-  PW_RE: 'pw_re',
-} as const;
-type JOIN_INFO = typeof JOIN_INFO[keyof typeof JOIN_INFO];
-
 const JoinPage: NextPage = () => {
+  interface UserInfo {
+    id: string;
+    name: string;
+    pw: string;
+    pw_re: string;
+  }
+
+  interface Error {
+    message: string;
+  }
+
   // state
   const [userInfo, setUserInfo] = useState<UserInfo>({
     id: '',
@@ -27,6 +27,84 @@ const JoinPage: NextPage = () => {
     pw: '',
     pw_re: '',
   });
+
+  // enum
+  const JOIN_INFO = {
+    ID: 'id',
+    NAME: 'name',
+    PW: 'pw',
+    PW_RE: 'pw_re',
+  } as const;
+  type JOIN_INFO = typeof JOIN_INFO[keyof typeof JOIN_INFO];
+
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const [error, setError] = useState('');
+
+  const postUserData = useCallback(
+    async (email: string, password: string, name: string) => {
+      try {
+        const { user } = await createUserWithEmailAndPassword(getAuth(), email, password);
+        await updateProfile(user, {
+          displayName: name,
+          photoURL: '',
+        });
+
+        await set(ref(getDatabase(), 'users/' + user.uid), {
+          name: user.displayName,
+          avatar: user.photoURL,
+        });
+
+        await dispatch(set_user(user));
+
+        await router.push('/');
+      } catch (e) {
+        const error = e as Error;
+        setError(error.message);
+      }
+    },
+    [dispatch, router],
+  );
+
+  // 가입 클릭시...
+  const joinClick = useCallback(
+    (event: React.MouseEvent) => {
+      event.preventDefault();
+
+      const email = userInfo.id;
+      const name = userInfo.name;
+      const password = userInfo.pw;
+      const passwordConfirm = userInfo.pw_re;
+
+      if (
+        email.length == 0 ||
+        name.length == 0 ||
+        password.length == 0 ||
+        passwordConfirm.length == 0
+      ) {
+        setError('모든 항목을 입력해 주세요.');
+        return;
+      }
+
+      if (null == email.match('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')) {
+        setError('E-Mail 형식이 잘못되었습니다.');
+        return;
+      }
+
+      if (null == password.match('^[A-Za-z0-9]{6,12}$')) {
+        setError('비밀번호는 6글자 이상이어야 합니다.');
+        return;
+      }
+
+      if (password != passwordConfirm) {
+        setError('비밀번호가 같지 않습니다.');
+        return;
+      }
+
+      postUserData(email, password, name);
+    },
+    [postUserData, userInfo],
+  );
 
   // 인풋 텍스트에서 가입에 필요한 정보를 받드면 userInfo를 갱신한다.
   const changeInfo = (joinInfo: JOIN_INFO, value: string) => {
@@ -56,36 +134,6 @@ const JoinPage: NextPage = () => {
       default:
         break;
     }
-  };
-
-  // 가입 클릭시...
-  const joinClick = () => {
-    if (
-      userInfo.id.length == 0 ||
-      userInfo.name.length == 0 ||
-      userInfo.pw.length == 0 ||
-      userInfo.pw_re.length == 0
-    ) {
-      alert('모든 항목을 입력해 주세요.');
-      return;
-    }
-
-    if (null == userInfo.id.match('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')) {
-      alert('E-Mail 형식이 잘못되었습니다.');
-      return;
-    }
-
-    if (null == userInfo.pw.match('^[A-Za-z0-9]{6,12}$')) {
-      alert('비밀번호는 6글자 이상이어야 합니다.');
-      return;
-    }
-
-    if (userInfo.pw != userInfo.pw_re) {
-      alert('비밀번호가 같지 않습니다.');
-      return;
-    }
-
-    alert('가입 완료!');
   };
 
   const onChangeX = (joinInfo: JOIN_INFO, value: string) => {
@@ -125,7 +173,18 @@ const JoinPage: NextPage = () => {
             joinType={JOIN_INFO.PW_RE}
             onChangeX={onChangeX}
           ></JoinInput>
-          <button onClick={joinClick}>회원 가입</button>
+          {error ? (
+            <div
+              className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+              role="alert"
+            >
+              <span className="block sm:inline">{error}</span>
+            </div>
+          ) : null}
+
+          <button className="mt-4" onClick={joinClick}>
+            회원 가입
+          </button>
         </div>
       </div>
     </section>
