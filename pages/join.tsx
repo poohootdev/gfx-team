@@ -1,5 +1,5 @@
 import type { NextPage } from 'next';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import JoinInput from '../src/components/JoinInput';
 
 // interface
@@ -8,6 +8,10 @@ interface UserInfo {
   name: string;
   pw: string;
   pw_re: string;
+}
+
+interface JoinInputHandle {
+  handleWarningMsg: (msg: string) => void;
 }
 
 // enum
@@ -60,49 +64,68 @@ const JoinPage: NextPage = () => {
 
   // 가입 클릭시...
   const joinClick = () => {
-    if (
-      userInfo.id.length == 0 ||
-      userInfo.name.length == 0 ||
-      userInfo.pw.length == 0 ||
-      userInfo.pw_re.length == 0
-    ) {
-      alert('모든 항목을 입력해 주세요.');
-      return;
-    }
+    if (ref_id.current && ref_name.current && ref_pw.current && ref_pwRe.current) {
+      const id = ref_id.current;
+      const name = ref_name.current;
+      const pw = ref_pw.current;
+      const pwRe = ref_pwRe.current;
 
-    if (null == userInfo.id.match('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')) {
-      alert('E-Mail 형식이 잘못되었습니다.');
-      return;
-    }
+      // id 체크
+      if (userInfo.id.length == 0) {
+        id.handleWarningMsg('필수 정보입니다.');
+      } else if (null == userInfo.id.match('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')) {
+        id.handleWarningMsg('E-Mail 형식이 잘못되었습니다.');
+      } else {
+        id.handleWarningMsg('');
+      }
 
-    if (null == userInfo.pw.match('^[A-Za-z0-9]{6,12}$')) {
-      alert('비밀번호는 6글자 이상이어야 합니다.');
-      return;
-    }
+      // 이름 체크
+      if (userInfo.name.length == 0) {
+        name.handleWarningMsg('필수 정보입니다.');
+      } else {
+        name.handleWarningMsg('');
+      }
 
-    if (userInfo.pw != userInfo.pw_re) {
-      alert('비밀번호가 같지 않습니다.');
-      return;
-    }
+      // 비밀번호 체크
+      if (userInfo.pw.length == 0) {
+        pw.handleWarningMsg('필수 정보입니다.');
+      } else if (null == userInfo.pw.match('^[A-Za-z0-9]{6,16}$')) {
+        pw.handleWarningMsg('6~16자 영문 대 소문자, 숫자를 사용하세요.');
+      } else {
+        pw.handleWarningMsg('');
+      }
 
-    alert('가입 완료!');
+      // 비밀번호 확인
+      if (userInfo.pw_re.length == 0) {
+        pwRe.handleWarningMsg('필수 정보입니다.');
+      } else if (userInfo.pw != userInfo.pw_re) {
+        pwRe.handleWarningMsg('비밀번호가 같지 않습니다.');
+      } else {
+        pwRe.handleWarningMsg('');
+      }
+    }
   };
 
   const onChangeX = (joinInfo: JOIN_INFO, value: string) => {
-    //console.log(`joinInfo = ${joinInfo} value = ${value}`);
     changeInfo(joinInfo, value);
   };
 
+  const ref_id = useRef<JoinInputHandle>(null);
+  const ref_name = useRef<JoinInputHandle>(null);
+  const ref_pw = useRef<JoinInputHandle>(null);
+  const ref_pwRe = useRef<JoinInputHandle>(null);
+
   return (
-    <section className="h-full h-screen bg-zinc-200">
+    <section className="h-full h-screen bg-white shadow">
       <div className="flex justify-center items-center h-full">
-        <div className="text-center bg-[#504C98] rounded-lg border-red-600 p-4">
+        <div className="text-center bg-gray-900 text-[#ebe8e2] rounded-lg border-red-600 p-4">
           <JoinInput
             type={'text'}
             label={'아이디(이메일)'}
             placeholder={''}
             joinType={JOIN_INFO.ID}
             onChangeX={onChangeX}
+            ref={ref_id}
           ></JoinInput>
           <JoinInput
             type={'text'}
@@ -110,6 +133,7 @@ const JoinPage: NextPage = () => {
             placeholder={''}
             joinType={JOIN_INFO.NAME}
             onChangeX={onChangeX}
+            ref={ref_name}
           ></JoinInput>
           <JoinInput
             type={'password'}
@@ -117,6 +141,7 @@ const JoinPage: NextPage = () => {
             placeholder={''}
             joinType={JOIN_INFO.PW}
             onChangeX={onChangeX}
+            ref={ref_pw}
           ></JoinInput>
           <JoinInput
             type={'password'}
@@ -124,6 +149,7 @@ const JoinPage: NextPage = () => {
             placeholder={'비밀번호를 다시 입력해 주세요.'}
             joinType={JOIN_INFO.PW_RE}
             onChangeX={onChangeX}
+            ref={ref_pwRe}
           ></JoinInput>
           <button onClick={joinClick}>회원 가입</button>
         </div>
