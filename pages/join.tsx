@@ -1,14 +1,18 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import type { NextPage } from 'next';
+import JoinInput from '../src/components/JoinInput';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import '../src/firebase';
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { set, ref, getDatabase } from 'firebase/database';
 import { set_user } from '../src/slices/UserSlice';
-import JoinInput from '../src/components/JoinInput';
 
 const JoinPage: NextPage = () => {
+  interface JoinInputHandle {
+    handleWarningMsg: (msg: string) => void;
+  }
+
   interface UserInfo {
     id: string;
     name: string;
@@ -71,37 +75,65 @@ const JoinPage: NextPage = () => {
     (event: React.MouseEvent) => {
       event.preventDefault();
 
-      const email = userInfo.id;
-      const name = userInfo.name;
-      const password = userInfo.pw;
-      const passwordConfirm = userInfo.pw_re;
+      if (ref_id.current && ref_name.current && ref_pw.current && ref_pwRe.current) {
+        const refId = ref_id.current;
+        const refName = ref_name.current;
+        const refPw = ref_pw.current;
+        const refPWRe = ref_pwRe.current;
 
-      if (
-        email.length == 0 ||
-        name.length == 0 ||
-        password.length == 0 ||
-        passwordConfirm.length == 0
-      ) {
-        setError('모든 항목을 입력해 주세요.');
-        return;
+        const email = userInfo.id;
+        const name = userInfo.name;
+        const password = userInfo.pw;
+        const passwordConfirm = userInfo.pw_re;
+
+        let bId: boolean;
+        let bName: boolean;
+        let bPassword: boolean;
+
+        // id 체크
+        bId = false;
+        if (email.length == 0) {
+          refId.handleWarningMsg('필수 정보입니다.');
+        } else if (null == email.match('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')) {
+          refId.handleWarningMsg('E-Mail 형식이 잘못되었습니다.');
+        } else {
+          refId.handleWarningMsg('');
+          bId = true;
+        }
+
+        // 이름 체크
+        bName = false;
+        if (name.length == 0) {
+          refName.handleWarningMsg('필수 정보입니다.');
+        } else {
+          refName.handleWarningMsg('');
+          bName = true;
+        }
+
+        // 비밀번호 체크
+        bPassword = false;
+        if (password.length == 0) {
+          refPw.handleWarningMsg('필수 정보입니다.');
+        } else if (null == password.match('^[A-Za-z0-9]{6,16}$')) {
+          refPw.handleWarningMsg('6~16자 영문 대 소문자, 숫자를 사용하세요.');
+        } else {
+          refPw.handleWarningMsg('');
+          bPassword = true;
+        }
+
+        // 비밀번호 확인
+        bPassword = false;
+        if (passwordConfirm.length == 0) {
+          refPWRe.handleWarningMsg('필수 정보입니다.');
+        } else if (password != passwordConfirm) {
+          refPWRe.handleWarningMsg('비밀번호가 같지 않습니다.');
+        } else {
+          refPWRe.handleWarningMsg('');
+          bPassword = true;
+        }
+
+        if (bId && bName && bPassword) postUserData(email, password, name);
       }
-
-      if (null == email.match('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')) {
-        setError('E-Mail 형식이 잘못되었습니다.');
-        return;
-      }
-
-      if (null == password.match('^[A-Za-z0-9]{6,12}$')) {
-        setError('비밀번호는 6글자 이상이어야 합니다.');
-        return;
-      }
-
-      if (password != passwordConfirm) {
-        setError('비밀번호가 같지 않습니다.');
-        return;
-      }
-
-      postUserData(email, password, name);
     },
     [postUserData, userInfo],
   );
@@ -137,20 +169,25 @@ const JoinPage: NextPage = () => {
   };
 
   const onChangeX = (joinInfo: JOIN_INFO, value: string) => {
-    //console.log(`joinInfo = ${joinInfo} value = ${value}`);
     changeInfo(joinInfo, value);
   };
 
+  const ref_id = useRef<JoinInputHandle>(null);
+  const ref_name = useRef<JoinInputHandle>(null);
+  const ref_pw = useRef<JoinInputHandle>(null);
+  const ref_pwRe = useRef<JoinInputHandle>(null);
+
   return (
-    <section className="h-full h-screen bg-zinc-200">
+    <section className="h-full h-screen bg-white shadow">
       <div className="flex justify-center items-center h-full">
-        <div className="text-center bg-[#504C98] rounded-lg border-red-600 p-4">
+        <div className="text-center bg-gray-900 text-[#ebe8e2] rounded-lg border-red-600 p-4">
           <JoinInput
             type={'text'}
             label={'아이디(이메일)'}
             placeholder={''}
             joinType={JOIN_INFO.ID}
             onChangeX={onChangeX}
+            ref={ref_id}
           ></JoinInput>
           <JoinInput
             type={'text'}
@@ -158,6 +195,7 @@ const JoinPage: NextPage = () => {
             placeholder={''}
             joinType={JOIN_INFO.NAME}
             onChangeX={onChangeX}
+            ref={ref_name}
           ></JoinInput>
           <JoinInput
             type={'password'}
@@ -165,6 +203,7 @@ const JoinPage: NextPage = () => {
             placeholder={''}
             joinType={JOIN_INFO.PW}
             onChangeX={onChangeX}
+            ref={ref_pw}
           ></JoinInput>
           <JoinInput
             type={'password'}
@@ -172,6 +211,7 @@ const JoinPage: NextPage = () => {
             placeholder={'비밀번호를 다시 입력해 주세요.'}
             joinType={JOIN_INFO.PW_RE}
             onChangeX={onChangeX}
+            ref={ref_pwRe}
           ></JoinInput>
           {error ? (
             <div
