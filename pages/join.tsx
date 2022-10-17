@@ -7,6 +7,7 @@ import '../src/firebase';
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { set, ref, getDatabase } from 'firebase/database';
 import { set_user } from '../src/slices/UserSlice';
+import { Md5 } from 'ts-md5';
 
 const JoinPage: NextPage = () => {
   interface JoinInputHandle {
@@ -51,7 +52,7 @@ const JoinPage: NextPage = () => {
         const { user } = await createUserWithEmailAndPassword(getAuth(), email, password);
         await updateProfile(user, {
           displayName: name,
-          photoURL: '',
+          photoURL: `https://www.gravatar.com/avatar/${Md5.hashStr(email)}?d=identicon`,
         });
 
         await set(ref(getDatabase(), 'users/' + user.uid), {

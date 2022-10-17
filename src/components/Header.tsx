@@ -1,12 +1,13 @@
 import Image from 'next/image';
 import { Fragment } from 'react';
+import { useSelector } from 'react-redux';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { selectValue } from '../slices/UserSlice';
 
-const user = {
+const user_test = {
   name: 'poohoot',
   email: 'poohoot@abc.com',
-  imageUrl: 'https://ca.slack-edge.com/T0500RCKE-U4CFVC004-ef040106a8e8-512',
 };
 
 const navigation = [
@@ -27,6 +28,8 @@ function classNames(...classes: string[]) {
 }
 
 export default function Header() {
+  const { currentUser } = useSelector(selectValue);
+
   return (
     <>
       <div className="min-h-full">
@@ -68,7 +71,7 @@ export default function Header() {
                             <span className="sr-only">Open user menu</span>
                             <Image
                               className="rounded-full"
-                              src={user.imageUrl}
+                              src={currentUser?.photoURL as string}
                               alt=""
                               width="40"
                               height="40"
@@ -143,7 +146,7 @@ export default function Header() {
                     <div className="flex-shrink-0">
                       <Image
                         className="rounded-full"
-                        src={user.imageUrl}
+                        src={currentUser?.photoURL as string}
                         alt=""
                         width="40"
                         height="40"
@@ -151,10 +154,10 @@ export default function Header() {
                     </div>
                     <div className="ml-3">
                       <div className="text-base font-medium leading-none text-white">
-                        {user.name}
+                        {user_test.name}
                       </div>
                       <div className="text-sm font-medium leading-none text-gray-400">
-                        {user.email}
+                        {user_test.email}
                       </div>
                     </div>
                   </div>

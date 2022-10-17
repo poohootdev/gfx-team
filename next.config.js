@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ['ca.slack-edge.com'],
+    domains: ['www.gravatar.com'],
   },
 };
 
