@@ -4,11 +4,8 @@ import { useSelector } from 'react-redux';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { selectValue } from '../slices/UserSlice';
-
-const user_test = {
-  name: 'poohoot',
-  email: 'poohoot@abc.com',
-};
+import '../../src/firebase';
+import { getAuth, signOut } from 'firebase/auth';
 
 const navigation = [
   { name: '전체', href: '#', current: true },
@@ -20,7 +17,13 @@ const navigation = [
 
 const userNavigation = [
   { name: '내 정보', href: '#' },
-  { name: '로그아웃', href: '#' },
+  {
+    name: '로그아웃',
+    href: '/login',
+    onClick: async () => {
+      await signOut(getAuth());
+    },
+  },
 ];
 
 function classNames(...classes: string[]) {
@@ -67,8 +70,12 @@ export default function Header() {
                       {/* Profile dropdown */}
                       <Menu as="div" className="relative ml-3">
                         <div>
-                          <Menu.Button className="flex max-w-xs items-center rounded-full bg-gray-800 text-sm">
-                            <span className="sr-only">Open user menu</span>
+                          <Menu.Button className="flex max-w-xs items-center rounded-full text-sm">
+                            <div className="mr-2">
+                              <div className="text-base font-medium leading-none text-white">
+                                {currentUser?.displayName}
+                              </div>
+                            </div>
                             <Image
                               className="rounded-full"
                               src={currentUser?.photoURL as string}
@@ -78,6 +85,7 @@ export default function Header() {
                             />
                           </Menu.Button>
                         </div>
+
                         <Transition
                           as={Fragment}
                           enter="transition ease-out duration-100"
@@ -93,6 +101,7 @@ export default function Header() {
                                 {({ active }) => (
                                   <a
                                     href={item.href}
+                                    onClick={item.onClick}
                                     className={classNames(
                                       active ? 'bg-gray-100' : '',
                                       'block px-4 py-2 text-sm text-gray-700',
@@ -154,10 +163,10 @@ export default function Header() {
                     </div>
                     <div className="ml-3">
                       <div className="text-base font-medium leading-none text-white">
-                        {user_test.name}
+                        {currentUser?.displayName}
                       </div>
                       <div className="text-sm font-medium leading-none text-gray-400">
-                        {user_test.email}
+                        {currentUser?.email}
                       </div>
                     </div>
                   </div>
@@ -167,6 +176,7 @@ export default function Header() {
                         key={item.name}
                         as="a"
                         href={item.href}
+                        onClick={item.onClick}
                         className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                       >
                         {item.name}

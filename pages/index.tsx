@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { set_user, clear_user } from '../src/slices/UserSlice';
 import '../src/firebase';
@@ -11,16 +12,19 @@ import Header from '../src/components/Header';
 const Home: NextPage = () => {
   const dispatch = useDispatch();
 
+  const router = useRouter();
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(getAuth(), (user) => {
       if (!!user) {
         dispatch(set_user(user));
       } else {
         dispatch(clear_user());
+        router.replace('/login');
       }
     });
     return () => unsubscribe();
-  }, [dispatch]);
+  }, [dispatch, router]);
 
   return (
     <>
