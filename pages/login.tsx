@@ -1,7 +1,8 @@
 import React, { useState, FormEvent } from 'react';
 import type { NextPage } from 'next';
-import UserInfoInput from '../src/components/UserInfoInput';
 import Head from 'next/head';
+import Link from 'next/link';
+import UserInfoInput from '../src/components/UserInfoInput';
 
 const LoginPage: NextPage = () => {
   interface FormElements extends HTMLFormElement {
@@ -15,14 +16,12 @@ const LoginPage: NextPage = () => {
 
   const [warningEmail, setWarningEmail] = useState('');
   const [warningPassword, setWarningPassword] = useState('');
-  const [warningPasswordConfirm, setWarningPasswordConfirm] = useState('');
 
   const handleSubmit = (event: FormTarget) => {
     event.preventDefault();
 
     const email = event.target.email.value;
     const password = event.target.password.value;
-    const passwordConfirm = event.target.passwordConfirm.value;
 
     if (!email) {
       setWarningEmail('필수 정보 입니다.');
@@ -40,15 +39,7 @@ const LoginPage: NextPage = () => {
       setWarningPassword('');
     }
 
-    if (!passwordConfirm) {
-      setWarningPasswordConfirm('필수 정보 입니다.');
-    } else if (password != passwordConfirm) {
-      setWarningPasswordConfirm('비밀번호가 같지 않습니다.');
-    } else {
-      setWarningPasswordConfirm('');
-    }
-
-    if (email && password && passwordConfirm && password === passwordConfirm) {
+    if (email && password) {
       //FireBase 로그인
       console.log('FireBase 로그인');
     }
@@ -57,7 +48,7 @@ const LoginPage: NextPage = () => {
   return (
     <>
       <Head>
-        <title>GFX TEAM - 로그 인</title>
+        <title>GFX TEAM - 로그인</title>
       </Head>
       <div className="flex h-screen">
         <div className="m-auto">
@@ -69,7 +60,7 @@ const LoginPage: NextPage = () => {
             className="w-96 max-w-md m-auto rounded px-8 pt-6 pb-8 mb-4"
             autoComplete="off"
           >
-            <div className="flex justify-center text-2xl mt-2">GFX TEAM</div>
+            <div className="flex justify-center text-2xl mt-2">GFX TEAM 로그인</div>
             <UserInfoInput
               id={'email'}
               className={'mt-4 mb-4'}
@@ -83,13 +74,7 @@ const LoginPage: NextPage = () => {
               autoComplete={'off'}
               warnigMsg={warningPassword}
             ></UserInfoInput>
-            <UserInfoInput
-              id={'passwordConfirm'}
-              type={'password'}
-              placeholder={'비밀번호 확인 입력'}
-              autoComplete={'off'}
-              warnigMsg={warningPasswordConfirm}
-            ></UserInfoInput>
+
             <div className="flex items-center justify-center">
               <input
                 id="submit"
@@ -98,6 +83,11 @@ const LoginPage: NextPage = () => {
                 value="로그인"
               />
             </div>
+            <Link href="../join">
+              <div className="flex justify-end text-gray-900">
+                <button>회원가입</button>
+              </div>
+            </Link>
           </form>
         </div>
       </div>

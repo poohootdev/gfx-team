@@ -157,7 +157,7 @@ const JoinPage: NextPage = () => {
                 id="submit"
                 type="submit"
                 className="w-full rounded-md border border-transparent bg-gray-900 py-2 px-4 text-white hover:bg-gray-700"
-                value="로그인"
+                value="가입하기"
               />
             </div>
           </form>
