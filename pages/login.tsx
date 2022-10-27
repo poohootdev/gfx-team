@@ -1,10 +1,15 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState, useCallback, FormEvent } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import UserInfoInput from '../src/components/UserInfoInput';
+import '../src/firebase';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 const LoginPage: NextPage = () => {
+  const router = useRouter();
+
   interface FormElements extends HTMLFormElement {
     email: HTMLInputElement;
     password: HTMLInputElement;
@@ -14,8 +19,13 @@ const LoginPage: NextPage = () => {
     target: FormElements;
   }
 
+  interface Error {
+    message: string;
+  }
+
   const [warningEmail, setWarningEmail] = useState('');
   const [warningPassword, setWarningPassword] = useState('');
+  const [error, setError] = useState('');
 
   const handleSubmit = (event: FormTarget) => {
     event.preventDefault();
@@ -40,10 +50,23 @@ const LoginPage: NextPage = () => {
     }
 
     if (email && password) {
-      //FireBase 로그인
-      console.log('FireBase 로그인');
+      loginUser(email, password);
     }
   };
+
+  const loginUser = useCallback(
+    async (email: string, password: string) => {
+      try {
+        await signInWithEmailAndPassword(getAuth(), email, password).then(() => {
+          router.push('/');
+        });
+      } catch (e) {
+        const error = e as Error;
+        setError(error.message);
+      }
+    },
+    [router],
+  );
 
   return (
     <>
@@ -74,7 +97,14 @@ const LoginPage: NextPage = () => {
               autoComplete={'off'}
               warnigMsg={warningPassword}
             ></UserInfoInput>
-
+            {error ? (
+              <div
+                className="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+                role="alert"
+              >
+                <span className="block sm:inline">{error}</span>
+              </div>
+            ) : null}
             <div className="flex items-center justify-center">
               <input
                 id="submit"
