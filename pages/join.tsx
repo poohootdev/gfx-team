@@ -1,5 +1,6 @@
 import React, { useState, useCallback, FormEvent } from 'react';
 import type { NextPage } from 'next';
+import UserInfoInput from '../src/components/UserInfoInput';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
@@ -116,62 +117,32 @@ const JoinPage: NextPage = () => {
             autoComplete="off"
           >
             <div className="flex justify-center text-2xl mt-2">회원 가입</div>
-            <div className="mt-4 mb-4">
-              <input
-                id="email"
-                className="mt-1 w-full rounded-md "
-                type="text"
-                placeholder="아이디(이메일) 입력"
-              />
-              {warningEmail ? (
-                <div id="id-msg" className="mt-1 mb-3 text-xs text-red-500">
-                  {warningEmail}
-                </div>
-              ) : null}
-            </div>
-            <div className="mb-4">
-              <input
-                id="userName"
-                type="text"
-                className="mt-1 w-full rounded-md"
-                placeholder="이름 입력"
-                autoComplete="off"
-              />
-              {warningUserName ? (
-                <div id="id-msg" className="mt-1 mb-3 text-xs text-red-500">
-                  {warningUserName}
-                </div>
-              ) : null}
-            </div>
-            <div className="mb-4">
-              <input
-                id="password"
-                type="password"
-                className="mt-1 w-full rounded-md"
-                placeholder="비밀번호 입력"
-                autoComplete="off"
-              />
-              {warningPassword ? (
-                <div id="id-msg" className="mt-1 mb-3 text-xs text-red-500">
-                  {warningPassword}
-                </div>
-              ) : null}
-            </div>
-            <div className="mb-4">
-              <input
-                id="passwordConfirm"
-                type="password"
-                className="mt-1 w-full rounded-md"
-                placeholder="비밀번호 확인 입력"
-                autoComplete="off"
-              />
-              {warningPasswordConfirm ? (
-                <div id="id-msg" className="mt-1 mb-3 text-xs text-red-500">
-                  {warningPasswordConfirm}
-                </div>
-              ) : null}
-            </div>
-
+            <UserInfoInput
+              id={'email'}
+              className={'mt-4 mb-4'}
+              placeholder={'아이디(이메일) 입력'}
+              warnigMsg={warningEmail}
+            ></UserInfoInput>
+            <UserInfoInput
+              id={'userName'}
+              placeholder={'이름 입력'}
+              warnigMsg={warningUserName}
+              autoComplete={'off'}
+            ></UserInfoInput>
+            <UserInfoInput
+              id={'password'}
+              type={'password'}
+              placeholder={'비밀번호 입력'}
+              autoComplete={'off'}
+              warnigMsg={warningPassword}
+            ></UserInfoInput>
+            <UserInfoInput
+              id={'passwordConfirm'}
+              type={'password'}
+              placeholder={'비밀번호 확인 입력'}
+              autoComplete={'off'}
+              warnigMsg={warningPasswordConfirm}
+            ></UserInfoInput>
             {error ? (
               <div
                 className="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
