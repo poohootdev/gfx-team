@@ -1,5 +1,6 @@
 import React, { useState, FormEvent } from 'react';
 import type { NextPage } from 'next';
+import UserInfoInput from '../src/components/UserInfoInput';
 import Head from 'next/head';
 
 const LoginPage: NextPage = () => {
@@ -49,9 +50,6 @@ const LoginPage: NextPage = () => {
 
     if (email && password && passwordConfirm && password === passwordConfirm) {
       //FireBase 로그인
-
-      console.log(warningEmail);
-      console.log(warningPassword);
       console.log('FireBase 로그인');
     }
   };
@@ -72,47 +70,26 @@ const LoginPage: NextPage = () => {
             autoComplete="off"
           >
             <div className="flex justify-center text-2xl mt-2">GFX TEAM</div>
-            <div className="mt-4 mb-4">
-              <input
-                id="email"
-                className="mt-1 w-full rounded-md "
-                type="text"
-                placeholder="아이디(이메일) 입력"
-              />
-              {warningEmail ? (
-                <div id="id-msg" className="mt-1 mb-3 text-xs text-red-500">
-                  {warningEmail}
-                </div>
-              ) : null}
-            </div>
-            <div className="mb-4">
-              <input
-                id="password"
-                type="password"
-                className="mt-1 w-full rounded-md"
-                placeholder="비밀번호 입력"
-                autoComplete="off"
-              />
-              {warningPassword ? (
-                <div id="id-msg" className="mt-1 mb-3 text-xs text-red-500">
-                  {warningPassword}
-                </div>
-              ) : null}
-            </div>
-            <div className="mb-4">
-              <input
-                id="passwordConfirm"
-                type="password"
-                className="mt-1 w-full rounded-md"
-                placeholder="비밀번호 확인 입력"
-                autoComplete="off"
-              />
-              {warningPasswordConfirm ? (
-                <div id="id-msg" className="mt-1 mb-3 text-xs text-red-500">
-                  {warningPasswordConfirm}
-                </div>
-              ) : null}
-            </div>
+            <UserInfoInput
+              id={'email'}
+              className={'mt-4 mb-4'}
+              placeholder={'아이디(이메일) 입력'}
+              warnigMsg={warningEmail}
+            ></UserInfoInput>
+            <UserInfoInput
+              id={'password'}
+              type={'password'}
+              placeholder={'비밀번호 입력'}
+              autoComplete={'off'}
+              warnigMsg={warningPassword}
+            ></UserInfoInput>
+            <UserInfoInput
+              id={'passwordConfirm'}
+              type={'password'}
+              placeholder={'비밀번호 확인 입력'}
+              autoComplete={'off'}
+              warnigMsg={warningPasswordConfirm}
+            ></UserInfoInput>
             <div className="flex items-center justify-center">
               <input
                 id="submit"
