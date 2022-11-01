@@ -26,6 +26,7 @@ const LoginPage: NextPage = () => {
   const [warningEmail, setWarningEmail] = useState('');
   const [warningPassword, setWarningPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (event: FormTarget) => {
     event.preventDefault();
@@ -56,6 +57,9 @@ const LoginPage: NextPage = () => {
 
   const loginUser = useCallback(
     async (email: string, password: string) => {
+      setError('');
+      setLoading(true);
+
       try {
         await signInWithEmailAndPassword(getAuth(), email, password).then(() => {
           router.push('/');
@@ -63,6 +67,7 @@ const LoginPage: NextPage = () => {
       } catch (e) {
         const error = e as Error;
         setError(error.message);
+        setLoading(false);
       }
     },
     [router],
@@ -105,19 +110,56 @@ const LoginPage: NextPage = () => {
                 <span className="block sm:inline">{error}</span>
               </div>
             ) : null}
-            <div className="flex items-center justify-center">
-              <input
-                id="submit"
-                type="submit"
-                className="w-full rounded-md border border-transparent bg-gray-900 py-2 px-4 text-white hover:bg-gray-700"
-                value="로그인"
-              />
-            </div>
-            <Link href="../join">
-              <div className="flex justify-end text-gray-900">
-                <button>회원가입</button>
+
+            {!loading ? (
+              <div className="flex items-center justify-center">
+                <input
+                  id="submit"
+                  type="submit"
+                  className="w-full rounded-md border border-transparent bg-gray-900 py-2 px-4 text-white hover:bg-gray-700"
+                  value="로그인"
+                />
               </div>
-            </Link>
+            ) : null}
+
+            {loading ? (
+              <div className="flex items-center">
+                <button
+                  type="button"
+                  className="inline-flex w-full justify-center px-4 py-2 leading-6 rounded-md border border-transparent text-white bg-gray-900 cursor-not-allowed"
+                >
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  처리중...
+                </button>
+              </div>
+            ) : null}
+
+            <div className="flex justify-end">
+              <Link href="../join">
+                <button className="text-blue-900">
+                  <b>회원가입</b>
+                </button>
+              </Link>
+            </div>
           </form>
         </div>
       </div>
