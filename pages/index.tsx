@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useDispatch } from 'react-redux';
-import { set_user, clear_user } from '../src/slices/UserSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { set_user, clear_user, selectValue } from '../src/slices/UserSlice';
 import '../src/firebase';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Footer from '../src/components/Footer';
@@ -11,6 +11,7 @@ import Header from '../src/components/Header';
 
 const Home: NextPage = () => {
   const dispatch = useDispatch();
+  const { isLoading } = useSelector(selectValue);
 
   const router = useRouter();
 
@@ -25,6 +26,10 @@ const Home: NextPage = () => {
     });
     return () => unsubscribe();
   }, [dispatch, router]);
+
+  if (isLoading) {
+    return <></>;
+  }
 
   return (
     <>
