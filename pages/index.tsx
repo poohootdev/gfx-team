@@ -8,6 +8,7 @@ import '../src/firebase';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Footer from '../src/components/Footer';
 import Header from '../src/components/Header';
+import RegistButton from '../src/components/RegistButton';
 
 const Home: NextPage = () => {
   const dispatch = useDispatch();
@@ -44,6 +45,7 @@ const Home: NextPage = () => {
           </div>
         </div>
       </main>
+      <RegistButton />
       <Footer />
     </>
   );
