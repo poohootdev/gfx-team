@@ -9,7 +9,7 @@ const RegistButton = () => {
   return (
     <div className="relative">
       <div className="fixed bottom-0 right-0 h-16 w-16">
-        <div onClick={handleOnClick}>
+        <div className="cursor-pointer" onClick={handleOnClick}>
           <div className="absolute left-0 top-0">
             <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 24 24">
               <g fill="#000000">
