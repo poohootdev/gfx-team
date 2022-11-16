@@ -1,9 +1,13 @@
 import SvgSoket from './SvgSoket';
 
-const RegistButton = () => {
+interface ICallback {
+  onClick: () => void;
+}
+
+const RegistButton = ({ onClick }: ICallback) => {
   const handleOnClick = (event: React.MouseEvent) => {
     event.preventDefault();
-    console.log(event);
+    onClick();
   };
 
   return (
