@@ -5,6 +5,7 @@ interface UserInfoType {
   placeholder?: string;
   autoComplete?: string;
   warnigMsg?: string;
+  defaultValue?: string;
 }
 
 const defaultProps = {
@@ -14,10 +15,11 @@ const defaultProps = {
   placeholder: '',
   autoComplete: 'on',
   warnigMsg: '',
+  defaultValue: '',
 };
 
 const UserInfoInput = (props: UserInfoType) => {
-  const { id, className, type, placeholder, autoComplete, warnigMsg } = props;
+  const { id, className, type, placeholder, autoComplete, warnigMsg, defaultValue } = props;
 
   return (
     <div className={className}>
@@ -27,6 +29,7 @@ const UserInfoInput = (props: UserInfoType) => {
         type={type}
         placeholder={placeholder}
         autoComplete={autoComplete}
+        defaultValue={defaultValue}
       />
       {warnigMsg ? (
         <div id="id-msg" className="mt-1 mb-3 text-xs text-red-500">
