@@ -1,12 +1,10 @@
-import type { NextPage } from 'next';
-import React, { useState, useEffect, FormEvent } from 'react';
-import '../src/firebase';
+import React, { useState, useEffect, FormEvent, forwardRef, useImperativeHandle } from 'react';
 import { get, set, child, ref, getDatabase } from 'firebase/database';
 
-import GFxItem from '../src/components/gfxlist/GFxItem';
-import GFxNav from '../src/components/gfxlist/GFxNav';
-import PopupUIUpdate from '../src/components/popup/PopupUIUpdate';
-import PopupUIDel from '../src/components/popup/PopupUIDel';
+import GFxItem from './GFxItem';
+import GFxNav from './GFxNav';
+import PopupUIUpdate from '../popup/PopupUIUpdate';
+import PopupUIDel from '../popup/PopupUIDel';
 
 export interface ListInfo {
   api: string;
@@ -15,20 +13,25 @@ export interface ListInfo {
   subject: string;
 }
 
-const ApiList: NextPage = () => {
-  interface FormElements extends HTMLFormElement {
-    email: HTMLInputElement;
-    password: HTMLInputElement;
-  }
+interface FormElements extends HTMLFormElement {
+  email: HTMLInputElement;
+  password: HTMLInputElement;
+}
 
-  interface FormTarget extends FormEvent<HTMLFormElement> {
-    target: FormElements;
-  }
+interface FormTarget extends FormEvent<HTMLFormElement> {
+  target: FormElements;
+}
 
+// const GFxList = () => {
+const GFxList = forwardRef(function GFxList(props: unknown, gfxRef?: React.Ref<unknown>) {
   const [data, setData] = useState<ListInfo[]>([]);
   const [setMenu, setSelMenu] = useState('');
 
   const [item, setItem] = useState({ api: '', fla: '', member: '', subject: '' });
+
+  useImperativeHandle(gfxRef, () => ({
+    getData: () => getData(),
+  }));
 
   const changeMenu = (name: string) => {
     setSelMenu(name);
@@ -86,7 +89,7 @@ const ApiList: NextPage = () => {
       .catch((error: Error) => {
         setUpdateIsLoading(false);
         setUpdateOpen(false);
-        console.log(error.message);
+        setUpdateError(error.message);
       });
   };
 
@@ -103,7 +106,7 @@ const ApiList: NextPage = () => {
       .catch((error: Error) => {
         setDelIsLoading(false);
         setDelOpen(false);
-        console.log(error.message);
+        setDelError(error.message);
       });
   };
 
@@ -161,6 +164,6 @@ const ApiList: NextPage = () => {
       </div>
     </>
   );
-};
+});
 
-export default ApiList;
+export default GFxList;

@@ -2,7 +2,7 @@ import { Fragment, useRef, FormEvent } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import UserInfoInput from '../UserInfoInput';
-import { ListInfo } from '../../../pages/gfxList';
+import { ListInfo } from '../gfxlist/GFxList';
 
 interface FormElements extends HTMLFormElement {
   email: HTMLInputElement;

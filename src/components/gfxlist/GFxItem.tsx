@@ -1,4 +1,4 @@
-import { ListInfo } from '../../../pages/gfxList';
+import { ListInfo } from './GFxList';
 import SvgSoket from '../../components/SvgSoket';
 
 interface PropType {

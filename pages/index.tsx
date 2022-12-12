@@ -1,4 +1,4 @@
-import { useState, useEffect, FormEvent, useCallback } from 'react';
+import { useState, useEffect, FormEvent, useCallback, useRef } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -12,6 +12,7 @@ import RegistButton from '../src/components/RegistButton';
 import '../src/firebase';
 import { set, ref, getDatabase } from 'firebase/database';
 import PopupUIRegist from '../src/components/popup/PopupUIRegist';
+import GFxList from '../src/components/gfxlist/GFxList';
 
 const Home: NextPage = () => {
   interface FormElements extends HTMLFormElement {
@@ -22,6 +23,12 @@ const Home: NextPage = () => {
   interface FormTarget extends FormEvent<HTMLFormElement> {
     target: FormElements;
   }
+
+  interface GFxListObject {
+    getData: () => void;
+  }
+
+  const gfxListRef = useRef<GFxListObject>(null);
 
   const dispatch = useDispatch();
   const { isLoading } = useSelector(selectValue);
@@ -51,6 +58,10 @@ const Home: NextPage = () => {
         });
 
         setOpen(false);
+        setLoading(false);
+        gfxListRef.current?.getData();
+        // router.replace('/');
+        // router.reload();
       } catch (e) {
         const error = e as Error;
         setError(error.message);
@@ -122,7 +133,8 @@ const Home: NextPage = () => {
       <main>
         <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
-            <div className="h-96 rounded-lg border-4 border-dashed border-gray-200" />
+            {/* <div className="h-96 rounded-lg border-4 border-dashed border-gray-200" /> */}
+            <GFxList ref={gfxListRef} />
           </div>
         </div>
       </main>
